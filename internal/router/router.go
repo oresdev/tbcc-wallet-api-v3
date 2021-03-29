@@ -50,10 +50,10 @@ func CreateHTTPHandler(db *sql.DB) (http.Handler, error) {
 		// r.Use(RSAmiddleware) //RSAmiddleware
 
 		r.Mount("/users", UserHandler(db))
-		r.Mount("/inner-update", UpdateHandler(db))
+		r.Mount("/updates", UpdateHandler(db))
 
-		r.Mount("/vpn", VpnHandler(db))       //development routes
-		r.Mount("/config", ConfigHandler(db)) //development routes
+		r.Mount("/vpn", VpnHandler(db))        //development routes
+		r.Mount("/configs", ConfigHandler(db)) //development routes
 
 	})
 
@@ -65,9 +65,12 @@ func UserHandler(db *sql.DB) http.Handler {
 
 	r.Group(func(r chi.Router) {
 		r.Get("/{uid}", h.GetUserHandler(db))
+		r.Get("/address/{address}", h.GetUserByAddressHandler(db))
 		r.Get("/", h.GetUsersHandler(db))
 		r.Post("/", h.CreateUserHandler(db)) //development routes
+
 		// todo POST users migration
+		r.Post("/migrate", h.MigrateUserHandler(db)) // migration from depricated database
 	})
 
 	return r

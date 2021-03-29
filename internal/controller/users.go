@@ -57,6 +57,25 @@ func GetUserHandler(db *sql.DB) http.HandlerFunc {
 	}
 }
 
+func GetUserByAddressHandler(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		address := chi.URLParam(r, "address")
+
+		user, err := service.DbGetUserByAddress(address, db)
+		if err != nil {
+			logrus.Errorf("GetUserByAddressHandler db: %v", err)
+			http.Error(w, "GetUserByAddressHandler err", http.StatusInternalServerError)
+			return
+		}
+
+		if _, err := w.Write(user); err != nil {
+			logrus.Errorf("GetUserByAddressHandler write: %v", err)
+			http.Error(w, "GetUserByAddressHandler write err", http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
 func CreateUserHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		p := model.User{}
@@ -77,6 +96,32 @@ func CreateUserHandler(db *sql.DB) http.HandlerFunc {
 		if err := json.NewEncoder(w).Encode(&id); err != nil {
 			logrus.Errorf("CreateUserHandler write id: %v", err)
 			http.Error(w, "CreateUserHandler write id", http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
+// migration handler
+func MigrateUserHandler(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		p := model.UserMigrateBody{}
+
+		if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
+			http.Error(w, "MigrateUserHandler read invalid params", http.StatusBadRequest)
+			return
+		}
+
+		newUser, err := service.DbMigrateUser(p.Addresses, db)
+		if err != nil {
+			logrus.Errorf("MigrateUserHandler db: %v", err)
+			http.Error(w, "MigrateUserHandler err", http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		if _, err := w.Write(newUser); err != nil {
+			logrus.Errorf("MigrateUserHandler write id: %v", err)
+			http.Error(w, "MigrateUserHandler write id", http.StatusInternalServerError)
 			return
 		}
 	}

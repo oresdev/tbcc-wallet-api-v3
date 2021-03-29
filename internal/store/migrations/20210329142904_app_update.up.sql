@@ -36,3 +36,4 @@ CREATE OR REPLACE FUNCTION create_update (_version int, _url text, _force boolea
 
 $$
 LANGUAGE SQL;
+

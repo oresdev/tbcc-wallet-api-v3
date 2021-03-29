@@ -43,6 +43,25 @@ CREATE OR REPLACE FUNCTION get_user_by_id (_user_id uuid)
 $$
 LANGUAGE SQL;
 
+CREATE OR REPLACE FUNCTION get_user_by_address (_address text)
+    RETURNS json
+    AS $$
+    SELECT
+        row_to_json(t) AS rowToJsont
+    FROM (
+        SELECT
+            id,
+            useraddress,
+            accounttype,
+            smartcard
+        FROM
+            users
+        WHERE
+            _address = ANY (users.useraddress)) t;
+
+$$
+LANGUAGE SQL;
+
 CREATE OR REPLACE FUNCTION create_user (_useraddress text[], _accounttype text, _smartcard boolean)
     RETURNS uuid
     AS $$

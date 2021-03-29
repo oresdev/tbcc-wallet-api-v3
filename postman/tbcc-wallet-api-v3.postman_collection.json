@@ -40,6 +40,38 @@
 					"response": []
 				},
 				{
+					"name": "Get user by address (in useraddress column)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/v3/users/address/{{address}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v3",
+								"users",
+								"address",
+								"{{address}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get users",
 					"request": {
 						"method": "GET",
@@ -111,6 +143,35 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Migrate user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"addresses\": [\r\n        \"bnb1s76hyee7xvxksxlkc4whsmc3gxuqhrqvd3y0zm\",\r\n        \"bnb1qnw2krjmg9tek4z8l75hq3hj94n0y6u0wv6rq2\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v3/users/migrate",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v3",
+								"users",
+								"migrate"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -165,14 +226,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/v3/config",
+							"raw": "{{host}}/api/v3/configs",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
 								"v3",
-								"config"
+								"configs"
 							]
 						}
 					},
@@ -198,14 +259,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/v3/inner-update",
+							"raw": "{{host}}/api/v3/updates",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
 								"v3",
-								"inner-update"
+								"updates"
 							]
 						}
 					},
@@ -229,14 +290,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/v3/inner-update",
+							"raw": "{{host}}/api/v3/updates",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
 								"v3",
-								"inner-update"
+								"updates"
 							]
 						}
 					},

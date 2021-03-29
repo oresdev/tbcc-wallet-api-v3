@@ -21,7 +21,7 @@ CREATE OR REPLACE FUNCTION get_user_ext (_user_id uuid)
         FROM
             users
         LEFT JOIN vpn_keys ON vpn_keys.user_id = users.id
-		LEFT JOIN app_config ON 1 = 1
+        LEFT JOIN app_config ON 1 = 1
     WHERE
         users.id = _user_id
     GROUP BY
