@@ -1,0 +1,275 @@
+{
+	"info": {
+		"_postman_id": "4f8cd158-5730-444b-9d1f-9028d54a7150",
+		"name": "tbcc-wallet-api-v3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "Get user by id (uid)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/v3/users/{{uid}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v3",
+								"users",
+								"{{uid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/v3/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v3",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"useraddress\": [\r\n        \"0x31Eb4DA0dF5486c58769DD604718Bf32bFd9fb3d\",\r\n        \"0x31Eb4DA0dF5486c58769DD604718Bf32bFd9fb3d\",\r\n        \"0x31Eb4DA0dF5486c58769DD604718Bf32bFd9fb3d\"\r\n    ],\r\n    \"accounttype\": \"TBCC Premium\",\r\n    \"smartcard\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v3/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v3",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user extended",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/v3/users/{{uid}}?ext=true",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v3",
+								"users",
+								"{{uid}}"
+							],
+							"query": [
+								{
+									"key": "ext",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "vpn-keys",
+			"item": [
+				{
+					"name": "Create vpn key",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"key\": \"58769DD604718Bf32bFd9fb3d\",\r\n    \"validity\": 1,\r\n    \"used\": true,\r\n    \"user_id\": \"{{uid}}\",\r\n    \"txhash\": \"0xb4bc263278d3f77a652a8d73a6bfd8ec0ba1a63923bbb4f38147fb8a943da26d\",\r\n    \"with_pro\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v3/vpn",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v3",
+								"vpn"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "app_config",
+			"item": [
+				{
+					"name": "Create config",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"config_group\": \"group_1\",\r\n    \"value\": {\r\n        \"a\": \"b\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v3/config",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v3",
+								"config"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "app_update",
+			"item": [
+				{
+					"name": "Create update",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"version\": 61,\r\n    \"url\": \"http://101.200.191.88/tbccwallet-61.apk\",\r\n    \"force\": true,\r\n    \"checksum\": \"de5484a824b44df5d99788cf7caca5fa\",\r\n    \"changelog\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v3/inner-update",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v3",
+								"inner-update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get updates",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v3/inner-update",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v3",
+								"inner-update"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Health check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/health",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "http://localhost:8000"
+		},
+		{
+			"key": "uid",
+			"value": "a41b496f-f738-4bfd-99df-57a34dd82717"
+		}
+	]
+}
