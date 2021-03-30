@@ -29,7 +29,7 @@ func GetUpdateHandler(db *sql.DB) http.HandlerFunc {
 
 func CreateUpdateHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		p := model.Update{}
+		p := model.Updates{}
 
 		if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
 			http.Error(w, "CreateConfigHandler read invalid params", http.StatusBadRequest)

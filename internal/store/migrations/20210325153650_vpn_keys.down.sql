@@ -1,3 +1,3 @@
 -- formated https://sqlformat.darold.net/
 
-DROP TABLE IF EXISTS vpn_keys;
+DROP TABLE IF EXISTS v3.vpn_keys;

@@ -1,3 +1,3 @@
 -- formated https://sqlformat.darold.net/
 
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS v3.users;

@@ -1,3 +1,3 @@
 -- formated https://sqlformat.darold.net/
 
-DROP TABLE IF EXISTS app_config;
+DROP TABLE IF EXISTS v3.app_config;

@@ -1,7 +1,7 @@
 package model
 
-// Update struct
-type Update struct {
+// Updates struct
+type Updates struct {
 	Version   int    `json:"version"`
 	URL       string `json:"url"`
 	Force     bool   `json:"force"`

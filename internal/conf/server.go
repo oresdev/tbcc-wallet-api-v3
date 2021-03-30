@@ -16,7 +16,7 @@ type config struct {
 		PoolSize     int           `default:"5" envconfig:"DB_POOLSIZE"`
 		MaxIdleConns int           `default:"3" envconfig:"DB_MAX_IDLE"`
 		ConnLifetime time.Duration `default:"10m" envconfig:"DB_CONNLIFETIME"`
-		Tmpl         string        `default:"host=%s port=%d dbname=%s user=%s password=%s sslmode=disable application_name=%s"`
+		Tmpl         string        `default:"host=%s port=%d dbname=%s user=%s password=%s sslmode=disable search_path=v3 application_name=%s"`
 	}
 }
 

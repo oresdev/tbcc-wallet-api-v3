@@ -12,7 +12,7 @@ import (
 
 func CreateConfigHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		p := model.Config{}
+		p := model.Configs{}
 
 		if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
 			http.Error(w, "CreateConfigHandler read invalid params", http.StatusBadRequest)

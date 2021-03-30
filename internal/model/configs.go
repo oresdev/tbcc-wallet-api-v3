@@ -2,8 +2,8 @@ package model
 
 import "encoding/json"
 
-// Config struct
-type Config struct {
+// Configs struct
+type Configs struct {
 	ConfigGroup string          `json:"config_group"`
 	Value       json.RawMessage `json:"value"`
 }

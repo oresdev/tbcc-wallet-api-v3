@@ -61,11 +61,26 @@ func GetUserByAddressHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		address := chi.URLParam(r, "address")
 
-		user, err := service.DbGetUserByAddress(address, db)
+		user, err := service.DbGetUserExtByAddress(address, db)
 		if err != nil {
 			logrus.Errorf("GetUserByAddressHandler db: %v", err)
 			http.Error(w, "GetUserByAddressHandler err", http.StatusInternalServerError)
 			return
+		}
+
+		if user == nil {
+			newUser, err := service.DbCreateUser([]string{address}, "Free", false, db)
+			if err != nil {
+				logrus.Errorf("GetUserByAddressHandler db: %v", err)
+				http.Error(w, "GetUserByAddressHandler err", http.StatusInternalServerError)
+				return
+			}
+
+			if _, err := w.Write(newUser); err != nil {
+				logrus.Errorf("GetUserByAddressHandler write: %v", err)
+				http.Error(w, "GetUserByAddressHandler write err", http.StatusInternalServerError)
+				return
+			}
 		}
 
 		if _, err := w.Write(user); err != nil {
@@ -85,7 +100,7 @@ func CreateUserHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		id, err := service.DbCreateUser(p.Useraddress, p.Accounttype, p.Smartcard, db)
+		user, err := service.DbCreateUser(p.Useraddress, p.Accounttype, p.Smartcard, db)
 		if err != nil {
 			logrus.Errorf("createUserHandler db: %v", err)
 			http.Error(w, "createUserHandler err", http.StatusInternalServerError)
@@ -93,7 +108,7 @@ func CreateUserHandler(db *sql.DB) http.HandlerFunc {
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		if err := json.NewEncoder(w).Encode(&id); err != nil {
+		if _, err := w.Write(user); err != nil {
 			logrus.Errorf("CreateUserHandler write id: %v", err)
 			http.Error(w, "CreateUserHandler write id", http.StatusInternalServerError)
 			return
@@ -118,8 +133,19 @@ func MigrateUserHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
+		u := model.User{}
+
+		json.Unmarshal(newUser, &u)
+
+		tmp, err := service.DbGetUserExt(u.ID.String(), db)
+		if err != nil {
+			logrus.Errorf("MigrateUserHandler db: %v", err)
+			http.Error(w, "MigrateUserHandler err", http.StatusInternalServerError)
+			return
+		}
+
 		w.WriteHeader(http.StatusCreated)
-		if _, err := w.Write(newUser); err != nil {
+		if _, err := w.Write(tmp); err != nil {
 			logrus.Errorf("MigrateUserHandler write id: %v", err)
 			http.Error(w, "MigrateUserHandler write id", http.StatusInternalServerError)
 			return
