@@ -8,6 +8,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// СreateDB ...
 func СreateDB(connectStr string, connLife time.Duration, maxIdle, poolSize int) (db *sql.DB, err error) {
 	db, err = sql.Open("postgres", connectStr)
 	if err != nil {

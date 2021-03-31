@@ -6,7 +6,8 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-type config struct {
+// Config struct
+type Config struct {
 	DB struct {
 		Host         string        `default:"localhost" envconfig:"DB_HOST"`
 		Name         string        `default:"postgres" envconfig:"DB_NAME"`
@@ -21,12 +22,13 @@ type config struct {
 	}
 }
 
-func ParseConfig(app string) (cfg config, err error) {
-	if err := envconfig.Process(app, &cfg); err != nil {
-		if err := envconfig.Usage(app, &cfg); err != nil {
-			return cfg, err
+// ParseConfig ...
+func ParseConfig(app string) (conf Config, err error) {
+	if err := envconfig.Process(app, &conf); err != nil {
+		if err := envconfig.Usage(app, &conf); err != nil {
+			return conf, err
 		}
-		return cfg, err
+		return conf, err
 	}
-	return cfg, nil
+	return conf, nil
 }

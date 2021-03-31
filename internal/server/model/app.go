@@ -16,3 +16,8 @@ type Configs struct {
 	ConfigGroup string          `json:"config_group"`
 	Value       json.RawMessage `json:"value"`
 }
+
+// Counter struct
+type Counter struct {
+	Version int `json:"version"`
+}

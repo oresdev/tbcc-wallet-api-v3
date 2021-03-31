@@ -97,3 +97,19 @@ func CreateConfigHandler(db *sql.DB) http.HandlerFunc {
 		}
 	}
 }
+
+// CountVersionHandler ...
+func CountVersionHandler(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		c := model.Counter{}
+
+		if err := json.NewDecoder(r.Body).Decode(&c); err != nil {
+			http.Error(w, "CountVersionHandler read invalid params", http.StatusBadRequest)
+			return
+		}
+
+		service.DbCountVersion(c.Version, db)
+
+		w.WriteHeader(http.StatusOK)
+	}
+}

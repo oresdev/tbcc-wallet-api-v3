@@ -37,7 +37,6 @@ func CreateHTTPHandler(db *sql.DB) (http.Handler, error) {
 		r.Use(rsa.CheckRSASignature) // CheckRSASignature
 
 		r.Mount("/users", UserHandler(db))
-		r.Mount("/vpn", VpnHandler(db))
 		r.Mount("/app", AppHandler(db))
 
 	})
@@ -59,18 +58,7 @@ func UserHandler(db *sql.DB) http.Handler {
 		// Migrate user data from depricated database (public scheme)
 		// Returns extended user data
 		r.Post("/migrate", h.MigrateUserHandler(db))
-	})
-
-	return r
-}
-
-// TODO remove development handler
-// VpnHandler ...
-func VpnHandler(db *sql.DB) http.Handler {
-	r := chi.NewRouter()
-
-	r.Group(func(r chi.Router) {
-		r.Post("/", h.CreateVpnKeyHandler(db))
+		r.Post("/{uuid}/buy-vpn", h.BuyVPNKeysHandler(db)) // TODO remove development routes
 	})
 
 	return r
@@ -85,6 +73,7 @@ func AppHandler(db *sql.DB) http.Handler {
 		r.Get("/config", h.GetConfigHandler(db))
 		r.Post("/update", h.CreateUpdateHandler(db)) // TODO remove development routes
 		r.Get("/update", h.GetUpdateHandler(db))
+		r.Post("/counter", h.CountVersionHandler(db)) // TODO remove development routes
 	})
 
 	return r

@@ -17,3 +17,8 @@ type VpnKey struct {
 	WithPro   null.Bool `json:"with_pro"`
 	Timestamp null.Time `json:"timestamp"`
 }
+
+// VpnKeyBuyBody struct
+type VpnKeyBuyBody struct {
+	TxHash string `json:"txhash"`
+}

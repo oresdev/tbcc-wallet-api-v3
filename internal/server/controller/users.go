@@ -164,3 +164,31 @@ func MigrateUserHandler(db *sql.DB) http.HandlerFunc {
 		}
 	}
 }
+
+// BuyVPNKeysHandler ...
+func BuyVPNKeysHandler(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		uuid := chi.URLParam(r, "uuid")
+
+		v := model.VpnKeyBuyBody{}
+
+		if err := json.NewDecoder(r.Body).Decode(&v); err != nil {
+			http.Error(w, "BuyVPNKeysHandler read invalid params", http.StatusBadRequest)
+			return
+		}
+
+		key, err := service.DbUpdateVpnKey(v.TxHash, uuid, db)
+		if err != nil {
+			logrus.Errorf("BuyVPNKeysHandler db: %v", err)
+			http.Error(w, "BuyVPNKeysHandler err", http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		if err := json.NewEncoder(w).Encode(&key); err != nil {
+			logrus.Errorf("CreateConfigHandler write id: %v", err)
+			http.Error(w, "CreateConfigHandler write id", http.StatusInternalServerError)
+			return
+		}
+	}
+}

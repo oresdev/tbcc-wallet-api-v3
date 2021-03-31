@@ -13,6 +13,7 @@ import (
 	"gopkg.in/guregu/null.v4"
 )
 
+// DbGetAllUsers ...
 func DbGetAllUsers(db *sql.DB) (data []byte, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -26,6 +27,7 @@ func DbGetAllUsers(db *sql.DB) (data []byte, err error) {
 	return data, nil
 }
 
+// DbGetUserByID ...
 func DbGetUserByID(id string, db *sql.DB) (data []byte, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -39,6 +41,7 @@ func DbGetUserByID(id string, db *sql.DB) (data []byte, err error) {
 	return data, nil
 }
 
+// DbGetUserExt ...
 func DbGetUserExt(id string, db *sql.DB) (data []byte, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -52,6 +55,7 @@ func DbGetUserExt(id string, db *sql.DB) (data []byte, err error) {
 	return data, nil
 }
 
+// DbUpdateUser ...
 func DbUpdateUser(uuid string, address string, db *sql.DB) (data []byte, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -65,6 +69,7 @@ func DbUpdateUser(uuid string, address string, db *sql.DB) (data []byte, err err
 	return data, nil
 }
 
+// DbCreateUser ...
 func DbCreateUser(useraddress []string, accounttype string, smartcard bool, db *sql.DB) (data []byte, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -78,6 +83,7 @@ func DbCreateUser(useraddress []string, accounttype string, smartcard bool, db *
 	return data, nil
 }
 
+// DbMigrateUser ...
 func DbMigrateUser(addresses []string, db *sql.DB) (data []byte, err error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
@@ -180,4 +186,18 @@ func DbMigrateUser(addresses []string, db *sql.DB) (data []byte, err error) {
 	data, err = DbGetUserExt(newUser.ID.String(), db)
 
 	return data, nil
+}
+
+// DbUpdateVpnKey ...
+func DbUpdateVpnKey(txhash string, uuid string, db *sql.DB) (k model.VpnKey, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	query := `update vpn_keys set user_id = $1, used = true, timestamp = current_timestamp AT TIME ZONE 'UTC', txhash = $2 where id = (select id from vpn_keys where used is null limit 1) returning vpn_keys.*`
+
+	if err := db.QueryRowContext(ctx, query, uuid, txhash).Scan(&k.ID, &k.Key, &k.Validity, &k.Used, &k.UserID, &k.TxHash, &k.WithPro, &k.Timestamp); err != nil {
+		return k, err
+	}
+
+	return k, nil
 }
