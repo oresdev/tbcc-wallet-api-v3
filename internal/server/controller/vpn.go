@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/oresdev/tbcc-wallet-api-v3/internal/model"
-	"github.com/oresdev/tbcc-wallet-api-v3/internal/service"
+	"github.com/oresdev/tbcc-wallet-api-v3/internal/server/model"
+	"github.com/oresdev/tbcc-wallet-api-v3/internal/server/service"
 	"github.com/sirupsen/logrus"
 )
 
+// CreateVpnKeyHandler ...
 func CreateVpnKeyHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		p := model.VpnKey{}
@@ -26,7 +27,7 @@ func CreateVpnKeyHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		w.WriteHeader(http.StatusCreated)
+		w.WriteHeader(http.StatusOK)
 		if err := json.NewEncoder(w).Encode(&id); err != nil {
 			logrus.Errorf("CreateVpnKeyHandler write id: %v", err)
 			http.Error(w, "CreateVpnKeyHandler write id", http.StatusInternalServerError)

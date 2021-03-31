@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/lib/pq"
-	"github.com/oresdev/tbcc-wallet-api-v3/internal/model"
+	"github.com/oresdev/tbcc-wallet-api-v3/internal/server/model"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -39,19 +39,6 @@ func DbGetUserByID(id string, db *sql.DB) (data []byte, err error) {
 	return data, nil
 }
 
-func DbGetUserExtByAddress(address string, db *sql.DB) (data []byte, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
-
-	query := `select get_user_ext_by_address($1)`
-
-	if err := db.QueryRowContext(ctx, query, address).Scan(&data); err != nil {
-		return nil, err
-	}
-
-	return data, nil
-}
-
 func DbGetUserExt(id string, db *sql.DB) (data []byte, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -59,6 +46,19 @@ func DbGetUserExt(id string, db *sql.DB) (data []byte, err error) {
 	query := `select get_user_ext($1)`
 
 	if err := db.QueryRowContext(ctx, query, id).Scan(&data); err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func DbUpdateUser(uuid string, address string, db *sql.DB) (data []byte, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	query := `select update_user($1, $2)`
+
+	if err := db.QueryRowContext(ctx, query, uuid, address).Scan(&data); err != nil {
 		return nil, err
 	}
 

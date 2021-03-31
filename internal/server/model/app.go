@@ -1,5 +1,7 @@
 package model
 
+import "encoding/json"
+
 // Updates struct
 type Updates struct {
 	Version   int    `json:"version"`
@@ -7,4 +9,10 @@ type Updates struct {
 	Force     bool   `json:"force"`
 	Checksum  string `json:"checksum"`
 	ChangeLog string `json:"changelog"`
+}
+
+// Configs struct
+type Configs struct {
+	ConfigGroup string          `json:"config_group"`
+	Value       json.RawMessage `json:"value"`
 }

@@ -1,14 +1,6 @@
 -- formated https://sqlformat.darold.net/
 
-CREATE TABLE v3.app_update (
-    version int PRIMARY KEY,
-    url text NOT NULL,
-    force boolean NOT NULL,
-    checksum text NOT NULL,
-    changelog text NOT NULL
-);
-
-CREATE OR REPLACE FUNCTION v3.get_updates ()
+CREATE OR REPLACE FUNCTION v3.get_update ()
     RETURNS json
     AS $$
     SELECT
@@ -26,8 +18,8 @@ CREATE OR REPLACE FUNCTION v3.get_updates ()
 $$
 LANGUAGE SQL;
 
-CREATE OR REPLACE FUNCTION v3.create_update (_version int, _url text, _force boolean, _checksum text, _changelog text)
-    RETURNS int
+CREATE OR REPLACE FUNCTION v3.create_update (_version integer, _url text, _force boolean, _checksum text, _changelog text)
+    RETURNS integer
     AS $$
     INSERT INTO app_update (version, url, force, checksum, changelog)
         VALUES (_version, _url, _force, _checksum, _changelog)
@@ -36,4 +28,3 @@ CREATE OR REPLACE FUNCTION v3.create_update (_version int, _url text, _force boo
 
 $$
 LANGUAGE SQL;
-

@@ -11,9 +11,9 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/oresdev/tbcc-wallet-api-v3/internal/conf"
-	"github.com/oresdev/tbcc-wallet-api-v3/internal/router"
-	"github.com/oresdev/tbcc-wallet-api-v3/internal/store"
+	"github.com/oresdev/tbcc-wallet-api-v3/internal/server/conf"
+	"github.com/oresdev/tbcc-wallet-api-v3/internal/server/router"
+	"github.com/oresdev/tbcc-wallet-api-v3/internal/server/store"
 )
 
 const appName = "tbcc-wallet-api-v3"
@@ -24,7 +24,7 @@ func main() {
 		logrus.Fatalf("parsing config; %v", err)
 	}
 
-	connectStr := fmt.Sprintf(c.DB.Tmpl, c.DB.Host, c.DB.Port, c.DB.Name, c.DB.User, c.DB.Password, appName)
+	connectStr := fmt.Sprintf(c.DB.Tmpl, c.DB.Host, c.DB.Port, c.DB.Name, c.DB.User, c.DB.Password, c.DB.Schema, appName)
 
 	db, err := store.СreateDB(connectStr, c.DB.ConnLifetime, c.DB.MaxIdleConns, c.DB.PoolSize)
 	if err != nil {
@@ -46,7 +46,7 @@ func main() {
 	}
 
 	go func() {
-		logrus.Println("Server started", time.Now().Format(time.RFC3339))
+		logrus.Println("server started at port:", os.Args[1], time.Now().Format(time.RFC3339))
 		listenErr <- server.ListenAndServe()
 	}()
 
@@ -66,7 +66,7 @@ func main() {
 		if err := server.Shutdown(ctx); err != nil {
 			logrus.Fatal(err)
 		}
-		logrus.Println("Stop server")
+		logrus.Println("stop server")
 		logrus.Exit(0)
 	}
 }

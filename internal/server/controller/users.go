@@ -6,11 +6,12 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"github.com/oresdev/tbcc-wallet-api-v3/internal/model"
-	"github.com/oresdev/tbcc-wallet-api-v3/internal/service"
+	"github.com/oresdev/tbcc-wallet-api-v3/internal/server/model"
+	"github.com/oresdev/tbcc-wallet-api-v3/internal/server/service"
 	"github.com/sirupsen/logrus"
 )
 
+// GetUsersHandler ...
 func GetUsersHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		users, err := service.DbGetAllUsers(db)
@@ -28,20 +29,12 @@ func GetUsersHandler(db *sql.DB) http.HandlerFunc {
 	}
 }
 
+// GetUserHandler ...
 func GetUserHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id := chi.URLParam(r, "uid")
+		id := chi.URLParam(r, "uuid")
 
-		ext := r.URL.Query().Get("ext")
-
-		var user []byte
-		var err error
-
-		if ext == "true" {
-			user, err = service.DbGetUserExt(id, db)
-		} else {
-			user, err = service.DbGetUserByID(id, db)
-		}
+		user, err := service.DbGetUserByID(id, db)
 
 		if err != nil {
 			logrus.Errorf("getUserHandler db: %v", err)
@@ -57,40 +50,58 @@ func GetUserHandler(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func GetUserByAddressHandler(db *sql.DB) http.HandlerFunc {
+// GetExtendedUserHandler ...
+func GetExtendedUserHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		address := chi.URLParam(r, "address")
+		id := chi.URLParam(r, "uuid")
 
-		user, err := service.DbGetUserExtByAddress(address, db)
+		user, err := service.DbGetUserExt(id, db)
+
 		if err != nil {
-			logrus.Errorf("GetUserByAddressHandler db: %v", err)
-			http.Error(w, "GetUserByAddressHandler err", http.StatusInternalServerError)
+			logrus.Errorf("GetExtendedUserHandler db: %v", err)
+			http.Error(w, "GetExtendedUserHandler err", http.StatusInternalServerError)
 			return
 		}
 
-		if user == nil {
-			newUser, err := service.DbCreateUser([]string{address}, "Free", false, db)
-			if err != nil {
-				logrus.Errorf("GetUserByAddressHandler db: %v", err)
-				http.Error(w, "GetUserByAddressHandler err", http.StatusInternalServerError)
-				return
-			}
-
-			if _, err := w.Write(newUser); err != nil {
-				logrus.Errorf("GetUserByAddressHandler write: %v", err)
-				http.Error(w, "GetUserByAddressHandler write err", http.StatusInternalServerError)
-				return
-			}
-		}
-
 		if _, err := w.Write(user); err != nil {
-			logrus.Errorf("GetUserByAddressHandler write: %v", err)
-			http.Error(w, "GetUserByAddressHandler write err", http.StatusInternalServerError)
+			logrus.Errorf("GetExtendedUserHandler write: %v", err)
+			http.Error(w, "GetExtendedUserHandler write err", http.StatusInternalServerError)
 			return
 		}
 	}
 }
 
+// UpdateUserHandler ...
+func UpdateUserHandler(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		uuid := chi.URLParam(r, "uuid")
+
+		address := struct {
+			address string
+		}{}
+
+		if err := json.NewDecoder(r.Body).Decode(&address); err != nil {
+			http.Error(w, "UpdateUserHandler read invalid params", http.StatusBadRequest)
+			return
+		}
+
+		user, err := service.DbUpdateUser(uuid, address.address, db)
+		if err != nil {
+			logrus.Errorf("DbUpdateUser: %v", err)
+			http.Error(w, "DbUpdateUser err", http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		if _, err := w.Write(user); err != nil {
+			logrus.Errorf("UpdateUserHandler write uuid: %v", err)
+			http.Error(w, "UpdateUserHandler write uuid", http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
+// CreateUserHandler ...
 func CreateUserHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		p := model.User{}
@@ -107,7 +118,7 @@ func CreateUserHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		w.WriteHeader(http.StatusCreated)
+		w.WriteHeader(http.StatusOK)
 		if _, err := w.Write(user); err != nil {
 			logrus.Errorf("CreateUserHandler write id: %v", err)
 			http.Error(w, "CreateUserHandler write id", http.StatusInternalServerError)
@@ -116,12 +127,13 @@ func CreateUserHandler(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-// migration handler
+// MigrateUserHandler ...
 func MigrateUserHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		p := model.UserMigrateBody{}
 
 		if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
+
 			http.Error(w, "MigrateUserHandler read invalid params", http.StatusBadRequest)
 			return
 		}
@@ -144,7 +156,7 @@ func MigrateUserHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		w.WriteHeader(http.StatusCreated)
+		w.WriteHeader(http.StatusOK)
 		if _, err := w.Write(tmp); err != nil {
 			logrus.Errorf("MigrateUserHandler write id: %v", err)
 			http.Error(w, "MigrateUserHandler write id", http.StatusInternalServerError)
