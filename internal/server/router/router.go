@@ -58,7 +58,7 @@ func UserHandler(db *sql.DB) http.Handler {
 		// Migrate user data from depricated database (public scheme)
 		// Returns extended user data
 		r.Post("/migrate", h.MigrateUserHandler(db))
-		r.Post("/{uuid}/buy-vpn", h.BuyVPNKeysHandler(db)) // TODO remove development routes
+		r.Post("/{uuid}/buy-vpn", h.PurchaseVpnKeyHandler(db))
 	})
 
 	return r

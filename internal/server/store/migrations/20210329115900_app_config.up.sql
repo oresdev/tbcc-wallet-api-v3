@@ -1,6 +1,5 @@
--- formated https://sqlformat.darold.net/
-
-CREATE OR REPLACE FUNCTION v3.get_config ()
+-- Returns app_config json data
+CREATE OR REPLACE FUNCTION v3.app_config_get_rows ()
     RETURNS json
     AS $$
     SELECT
@@ -15,7 +14,8 @@ CREATE OR REPLACE FUNCTION v3.get_config ()
 $$
 LANGUAGE SQL;
 
-CREATE OR REPLACE FUNCTION v3.create_config (_config_group text, _value json)
+-- Returns config_group string
+CREATE OR REPLACE FUNCTION v3.app_config_create_row (_config_group text, _value json)
     RETURNS text
     AS $$
     INSERT INTO app_config (config_group, value)
@@ -25,4 +25,3 @@ CREATE OR REPLACE FUNCTION v3.create_config (_config_group text, _value json)
 
 $$
 LANGUAGE SQL;
-

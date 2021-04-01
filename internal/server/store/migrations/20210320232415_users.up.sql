@@ -1,6 +1,5 @@
--- formated https://sqlformat.darold.net/
-
-CREATE OR REPLACE FUNCTION v3.get_users ()
+-- Returns users json data
+CREATE OR REPLACE FUNCTION v3.users_get_rows ()
     RETURNS json
     AS $$
     SELECT
@@ -17,7 +16,8 @@ CREATE OR REPLACE FUNCTION v3.get_users ()
 $$
 LANGUAGE SQL;
 
-CREATE OR REPLACE FUNCTION v3.get_user_by_id (_user_id uuid)
+-- Returns user json data
+CREATE OR REPLACE FUNCTION v3.users_get_by_uuid (_user_id uuid)
     RETURNS json
     AS $$
     SELECT
@@ -36,7 +36,8 @@ CREATE OR REPLACE FUNCTION v3.get_user_by_id (_user_id uuid)
 $$
 LANGUAGE SQL;
 
-CREATE OR REPLACE FUNCTION v3.get_user_ext (_user_id uuid)
+-- Returns user json data from users, vpn_keys, app_config
+CREATE OR REPLACE FUNCTION v3.users_get_extended_by_uuid (_user_id uuid)
     RETURNS json
     AS $$
     SELECT
@@ -62,7 +63,8 @@ $$
 LANGUAGE SQL;
 
 -- Migrate user data from depricated database (public scheme)
-CREATE OR REPLACE FUNCTION check_exists_user_and_return_ext (_addresses text[])
+-- Returns json data from users, vpn_keys, app_config
+CREATE OR REPLACE FUNCTION users_check_exists_by_addresses (_addresses text[])
     RETURNS json
     AS $$
     SELECT
@@ -93,7 +95,8 @@ CREATE OR REPLACE FUNCTION check_exists_user_and_return_ext (_addresses text[])
 $$
 LANGUAGE SQL;
 
-CREATE OR REPLACE FUNCTION v3.update_user (_uuid uuid, _address text)
+-- Returns json data from users
+CREATE OR REPLACE FUNCTION v3.users_update_by_uuid (_uuid uuid, _address text)
     RETURNS json
     AS $$
     UPDATE
@@ -108,7 +111,8 @@ CREATE OR REPLACE FUNCTION v3.update_user (_uuid uuid, _address text)
 $$
 LANGUAGE SQL;
 
-CREATE OR REPLACE FUNCTION v3.create_user (_useraddress text[], _accounttype text, _smartcard boolean)
+-- Returns json data from users
+CREATE OR REPLACE FUNCTION v3.users_create_row (_useraddress text[], _accounttype text, _smartcard boolean)
     RETURNS json
     AS $$
     INSERT INTO users (useraddress, accounttype, smartcard)

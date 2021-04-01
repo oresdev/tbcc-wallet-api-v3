@@ -12,7 +12,7 @@ func DbGetUpdates(db *sql.DB) (data []byte, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
-	query := `select get_update()`
+	query := `select app_update_get_rows()`
 
 	if err := db.QueryRowContext(ctx, query).Scan(&data); err != nil {
 		return nil, err
@@ -26,7 +26,7 @@ func DbCreateUpdate(version int, url string, force bool, checksum string, change
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
-	query := `select create_update($1, $2, $3, $4, $5)`
+	query := `select app_update_create_row($1, $2, $3, $4, $5)`
 
 	if err := db.QueryRowContext(ctx, query, version, url, force, checksum, changelog).Scan(&id); err != nil {
 		return id, err
@@ -40,7 +40,7 @@ func DbGetConfig(db *sql.DB) (data []byte, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
-	query := `select get_config()`
+	query := `select app_config_get_rows()`
 
 	if err := db.QueryRowContext(ctx, query).Scan(&data); err != nil {
 		return nil, err
@@ -54,7 +54,7 @@ func DbCreateConfig(config_group string, value json.RawMessage, db *sql.DB) (k s
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
-	query := `select create_config($1, $2)`
+	query := `select app_config_create_row($1, $2)`
 
 	if err := db.QueryRowContext(ctx, query, config_group, value).Scan(&config_group); err != nil {
 		return config_group, err
@@ -68,7 +68,7 @@ func DbCountVersion(version int, db *sql.DB) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
-	query := `update app_counter set count = count + 1 where version = $1`
+	query := `select app_counter_update_row($1)`
 
 	db.QueryRowContext(ctx, query, version)
 

@@ -1,6 +1,5 @@
--- formated https://sqlformat.darold.net/
-
-CREATE OR REPLACE FUNCTION v3.get_update ()
+-- Returns app_update json data
+CREATE OR REPLACE FUNCTION v3.app_update_get_rows ()
     RETURNS json
     AS $$
     SELECT
@@ -18,7 +17,8 @@ CREATE OR REPLACE FUNCTION v3.get_update ()
 $$
 LANGUAGE SQL;
 
-CREATE OR REPLACE FUNCTION v3.create_update (_version integer, _url text, _force boolean, _checksum text, _changelog text)
+-- Returns version integer row
+CREATE OR REPLACE FUNCTION v3.app_update_create_row (_version integer, _url text, _force boolean, _checksum text, _changelog text)
     RETURNS integer
     AS $$
     INSERT INTO app_update (version, url, force, checksum, changelog)
