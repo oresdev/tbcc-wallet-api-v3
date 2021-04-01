@@ -112,6 +112,20 @@ $$
 LANGUAGE SQL;
 
 -- Returns json data from users
+CREATE OR REPLACE FUNCTION v3.users_update_accounttype_by_address (_useraddress text, _accounttype text)
+    RETURNS VOID
+    AS $$
+    UPDATE
+        users
+    SET
+        accounttype = _accounttype
+    WHERE
+        _useraddress = ANY (useraddress);
+
+$$
+LANGUAGE SQL;
+
+-- Returns json data from users
 CREATE OR REPLACE FUNCTION v3.users_create_row (_useraddress text[], _accounttype text, _smartcard boolean)
     RETURNS json
     AS $$
