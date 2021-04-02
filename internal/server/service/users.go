@@ -15,7 +15,7 @@ import (
 
 // DbGetAllUsers ...
 func DbGetAllUsers(db *sql.DB) (data []byte, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
 	query := `select users_get_rows()`
@@ -29,49 +29,60 @@ func DbGetAllUsers(db *sql.DB) (data []byte, err error) {
 
 // DbGetUserByID ...
 func DbGetUserByID(id string, db *sql.DB) (data []byte, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
+	//ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	//defer cancel()
 
 	query := `select users_get_by_uuid($1)`
-
-	if err := db.QueryRowContext(ctx, query, id).Scan(&data); err != nil {
+	err = db.QueryRow(query, id).Scan(&data)
+	if(err != nil){
 		return nil, err
 	}
+	//if err := db.QueryRowContext(ctx, query, id).Scan(&data); err != nil {
+//		return nil, err
+//	}
 
 	return data, nil
 }
 
 // DbGetUserExt ...
 func DbGetUserExt(uuid string, db *sql.DB) (data []byte, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
+	//ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
+	//defer cancel()
 
 	query := `select users_get_extended_by_uuid($1)`
+	err = db.QueryRow(query, uuid).Scan(&data)
 
-	if err := db.QueryRowContext(ctx, query, uuid).Scan(&data); err != nil {
+	if(err != nil){
 		return nil, err
 	}
+	//if err := db.QueryRowContext(ctx, query, uuid).Scan(&data); err != nil {
+//		return nil, err
+//	}
 
 	return data, nil
 }
 
 // DbUpdateUser ...
 func DbUpdateUser(uuid string, address string, db *sql.DB) (data []byte, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
+	//ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	//defer cancel()
 
 	query := `select users_update_by_uuid($1, $2)`
 
-	if err := db.QueryRowContext(ctx, query, uuid, address).Scan(&data); err != nil {
-		return nil, err
+	err = db.QueryRow(query, uuid,address).Scan(&data)
+	if(err!= nil){
+		return nil,err
 	}
+	//if err := db.QueryRowContext(ctx, query, uuid, address).Scan(&data); err != nil {
+//		return nil, err
+//	}
 
 	return data, nil
 }
 
 // DbCreateUser ...
 func DbCreateUser(useraddress []string, accounttype string, smartcard bool, db *sql.DB) (data []byte, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
 	query := `select users_create_row($1, $2, $3)`
@@ -86,15 +97,23 @@ func DbCreateUser(useraddress []string, accounttype string, smartcard bool, db *
 // DbMigrateUser ...
 func DbMigrateUser(addresses []string, db *sql.DB) (data []byte, err error) {
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
+	//ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
+	//defer cancel()
 
-	query := `select users_check_exists_by_addresses($1)`
+	
 
-	err = db.QueryRowContext(ctx, query, pq.Array(addresses)).Scan(&data)
-	if err == nil && len(data) > 0 {
+
+	query := "select users_check_exists_by_addresses($1)"
+
+	err = db.QueryRow(query, pq.Array(addresses)).Scan(&data)
+
+	if(err == nil && len(data)>0){
 		return data, nil
 	}
+	//err = db.QueryRowContext(ctx, query, pq.Array(addresses)).Scan(&data)
+	//if err == nil && len(data) > 0 {
+	//	return data, nil
+	//}
 
 	users := []model.UserMigrate{}
 
@@ -190,7 +209,7 @@ func DbMigrateUser(addresses []string, db *sql.DB) (data []byte, err error) {
 
 // DbUpdateVpnKey ...
 func DbUpdateVpnKey(uuid string, txhash string, db *sql.DB) (data []byte, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
 	query := `select vpn_keys_update_by_uuid($1, $2)`

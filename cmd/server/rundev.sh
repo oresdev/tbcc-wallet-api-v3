@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 source ./env.sh
-go run -race ./*.go 8000
+go run -race ./*.go 8841

@@ -24,8 +24,7 @@ func main() {
 		logrus.Fatalf("parsing config; %v", err)
 	}
 
-	connectStr := fmt.Sprintf(c.DB.Tmpl, c.DB.Host, c.DB.Port, c.DB.Name, c.DB.User, c.DB.Password, c.DB.Schema, appName)
-
+	connectStr := fmt.Sprintf(c.DB.Tmpl, c.DB.Host, c.DB.Port, c.DB.Name, c.DB.User, c.DB.Password, c.DB.Schema)
 	db, err := store.СreateDB(connectStr, c.DB.ConnLifetime, c.DB.MaxIdleConns, c.DB.PoolSize)
 	if err != nil {
 		logrus.Errorf("opening connection: %v", err)
@@ -56,9 +55,10 @@ func main() {
 	select {
 	case err := <-listenErr:
 		logrus.Fatal(err)
+		logrus.Exit(1)
 	case <-osSignals:
 		server.SetKeepAlivesEnabled(false)
-		timeout := time.Second * 5
+		timeout := time.Second * 20
 
 		ctx, cancel := context.WithTimeout(context.Background(), timeout)
 		defer cancel()

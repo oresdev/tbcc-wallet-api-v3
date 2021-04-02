@@ -15,7 +15,7 @@ import (
 func CreateHTTPHandler(db *sql.DB) (http.Handler, error) {
 	mux := chi.NewMux()
 
-	mux.Get("/api/v3/ping", func(w http.ResponseWriter, r *http.Request) {
+	mux.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		if err := db.Ping(); err != nil {
 			http.Error(w, http.StatusText(500), 500)
 			return
@@ -24,7 +24,7 @@ func CreateHTTPHandler(db *sql.DB) (http.Handler, error) {
 		w.Write([]byte(http.StatusText(200)))
 	})
 
-	mux.Route("/api/v3", func(r chi.Router) {
+	mux.Route("/", func(r chi.Router) {
 		r.Use(middleware.SetHeader("Content-Type", "application/json"))
 		r.Use(cors.New(cors.Options{
 			AllowedOrigins:   []string{"*"},
@@ -49,11 +49,11 @@ func UserHandler(db *sql.DB) http.Handler {
 	r := chi.NewRouter()
 
 	r.Group(func(r chi.Router) {
-		r.Get("/", h.GetUsersHandler(db))
+		//r.Get("/", h.GetUsersHandler(db))
 		r.Get("/{uuid}", h.GetUserHandler(db))
 		r.Get("/ext/{uuid}", h.GetExtendedUserHandler(db))
 		r.Post("/{uuid}/update", h.UpdateUserHandler(db))
-		r.Post("/", h.CreateUserHandler(db)) // TODO remove development routes
+		//r.Post("/", h.CreateUserHandler(db)) // TODO remove development routes
 
 		// Migrate user data from depricated database (public scheme)
 		// Returns extended user data
@@ -71,9 +71,9 @@ func AppHandler(db *sql.DB) http.Handler {
 	r.Group(func(r chi.Router) {
 		r.Post("/config", h.CreateConfigHandler(db)) // TODO remove development routes
 		r.Get("/config", h.GetConfigHandler(db))
-		r.Post("/update", h.CreateUpdateHandler(db)) // TODO remove development routes
+		//r.Post("/update", h.CreateUpdateHandler(db)) // TODO remove development routes
 		r.Get("/update", h.GetUpdateHandler(db))
-		r.Post("/counter", h.CountVersionHandler(db)) // TODO remove development routes
+		r.Post("/counter", h.CountVersionHandler(db))
 	})
 
 	return r
